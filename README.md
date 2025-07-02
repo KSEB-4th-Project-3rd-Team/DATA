@@ -1,2 +1,2 @@
-# AI-2
-AI 파트 2
+# DATA
+DATA 파트
