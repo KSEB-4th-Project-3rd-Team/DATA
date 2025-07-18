@@ -7809,7 +7809,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1656638114904985436, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 58
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1656638114904985436, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'

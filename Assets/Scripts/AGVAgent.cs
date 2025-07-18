@@ -29,16 +29,17 @@ public class AGVAgent : Agent
     const int Right = 3;
 
     // 회전 구현 부분 & 이 부분은 AMR답게 움직일 수 있도록 수정할거라 삭제될 예정    나중에 바꿀라 했는데 바꿔야 학습 효율 올라간다네
-    //private bool isRotating = false;
-    //private Quaternion targetRotation;
-    //public float rotationSpeedDegPerSec = 180f; // 90도 회전에 0.5초 정도..?
+    // 근데 시뮬레이터 돌리는건데 그래도 천천히 돌리는...
+    private bool isRotating = false;
+    private Quaternion targetRotation;
+    public float rotationSpeedDegPerSec = 180f; // 90도 회전에 0.5초 정도..?
 
     private float prevDistToTarget = 0f;
     public Transform[] startPts;
     private int collisionCnt = 0;
 
     // 에이전트의 현재 각도를 정확히 추적하기 위한 변수
-    private Quaternion currentAgentRotation;
+    //private Quaternion currentAgentRotation;
 
     public override void Initialize()
     {
@@ -60,15 +61,35 @@ public class AGVAgent : Agent
     //    }
     //}
 
+    // FixedUpdate에서 회전 로직 처리 (Update 대신)
+    void FixedUpdate() // FixedUpdate로 변경
+    {
+        // OnActionReceived에서 설정된 isRotating 상태에 따라 회전 진행
+        if (isRotating)
+        {
+            // 현재 회전값에서 목표 회전값으로 점진적으로 회전
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeedDegPerSec * Time.fixedDeltaTime);
+
+            // 목표 회전에 거의 도달하면 회전 완료 처리
+            if (Quaternion.Angle(transform.rotation, targetRotation) < 0.1f)
+            {
+                transform.rotation = targetRotation; // 정확히 목표 각도로 설정
+                isRotating = false; // 회전 완료 플래그 해제
+            }
+        }
+         else { Debug.Log("회전 안함"); } // 디버그용
+    }
+
     public override void OnEpisodeBegin()
     {
         isPausedByYield = false;
         pauseTimer = 0f;
+        isRotating = false;
         int randIdx = Random.Range(0, startPts.Length);
 
         transform.position = startPts[randIdx].position;
         transform.rotation = Quaternion.Euler(0f, -90f, 0f);
-        currentAgentRotation = transform.rotation;  // 현재 에이전트의 회전값 초기화
+        //currentAgentRotation = transform.rotation;  // 현재 에이전트의 회전값 초기화
     
         SetNewRandomTarget();
         prevDistToTarget = Vector3.Distance(transform.position, currentTarget);
@@ -127,6 +148,14 @@ public class AGVAgent : Agent
             return;
         }
 
+        // 회전 중에는 다른 행동을 받지 않도록 처리
+        if (isRotating)
+        {
+            // 회전 중에는 추가 보상/패널티를 주지 않거나, 아주 작은 패널티만 줄 수 있음 (선택적)
+             AddReward(-0.0001f); // 회전 중 시간 경과 패널티
+            return; // 다른 행동 처리 없이 종료
+        }
+
         int action = actions.DiscreteActions[0];
         AddReward(-0.001f);     // 이전 0.01f보다 감소, 거리 기반 보상에 더 집중할 수 있도록
 
@@ -147,11 +176,15 @@ public class AGVAgent : Agent
                 }
                 break;
             case Left:
-                RotateLeft();
+                // RotateLeft 함수를 호출하는 대신, 여기서 목표 회전값 설정 및 회전 시작
+                targetRotation = transform.rotation * Quaternion.Euler(0f, -90f, 0f);
+                isRotating = true;
                 AddReward(-0.005f);     // 회전 행동에 대한 작은 패널티, -0.02f보다 감소
                 break;
             case Right:
-                RotateRight();
+                // RotateRight 함수를 호출하는 대신, 여기서 목표 회전값 설정 및 회전 시작
+                targetRotation = transform.rotation * Quaternion.Euler(0f, 90f, 0f);
+                isRotating = true;
                 AddReward(-0.005f);
                 break;
             default:
@@ -312,42 +345,44 @@ public class AGVAgent : Agent
         rb.MovePosition(rb.position + transform.forward * moveSpeed * Time.fixedDeltaTime);
     }
 
-    private void RotateLeft()
-    {
-        // --- 행동 개선 1: 즉시 90도 회전 적용 ---
-        // isRotating 플래그 및 Update 로직을 제거하고 OnActionReceived에서 즉시 각도를 변경합니다.
-        currentAgentRotation *= Quaternion.Euler(0f, -90f, 0f);
-        transform.rotation = currentAgentRotation;
-    }
+    //private void RotateLeft()
+    //{
+    //    // --- 행동 개선 1: 즉시 90도 회전 적용 ---
+    //    // isRotating 플래그 및 Update 로직을 제거하고 OnActionReceived에서 즉시 각도를 변경합니다.
+    //    currentAgentRotation *= Quaternion.Euler(0f, -90f, 0f);
+    //    transform.rotation = currentAgentRotation;
+    //}
 
-    private void RotateRight()
-    {
-        // --- 행동 개선 1: 즉시 90도 회전 적용 ---
-        currentAgentRotation *= Quaternion.Euler(0f, 90f, 0f);
-        transform.rotation = currentAgentRotation;
-    }
+    //private void RotateRight()
+    //{
+    //    // --- 행동 개선 1: 즉시 90도 회전 적용 ---
+    //    currentAgentRotation *= Quaternion.Euler(0f, 90f, 0f);
+    //    transform.rotation = currentAgentRotation;
+    //}
 
     // Heuristic 모드: 수동 제어
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        // Debug.Log("Heuristic 실행됨.");
         var discreteActionsOut = actionsOut.DiscreteActions;
         discreteActionsOut[0] = Idle;
+
+        // 회전 중에는 사용자 입력 무시
+        if (isRotating)
+        {
+            return;
+        }
 
         if (Input.GetKey(KeyCode.W))
         {
             discreteActionsOut[0] = Forward;
-            // Debug.Log("Press W: Forward");
         }
-        else if (Input.GetKeyDown(KeyCode.A)) // else if로 변경하여 한 번에 하나의 행동만 하도록
+        else if (Input.GetKeyDown(KeyCode.A)) // GetKeyDown 유지
         {
             discreteActionsOut[0] = Left;
-            // Debug.Log("Press A: Left");
         }
-        else if (Input.GetKeyDown(KeyCode.D)) // else if로 변경
+        else if (Input.GetKeyDown(KeyCode.D)) // GetKeyDown 유지
         {
             discreteActionsOut[0] = Right;
-            // Debug.Log("Press D: Right");
         }
     }
 }
