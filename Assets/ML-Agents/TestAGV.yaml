@@ -2,15 +2,15 @@ behaviors:
   AGVAgent:
     trainer_type: ppo
     time_horizon: 128
-    max_steps: 6.0e5
+    max_steps: 2.0e6
     summary_freq: 10000
     keep_checkpoints: 5
     checkpoint_interval: 100000
     threaded: true
 
     hyperparameters:
-      batch_size: 512
-      buffer_size: 4096
+      batch_size: 2048
+      buffer_size: 20480
       learning_rate: 2.0e-4
       beta: 1.0e-3
       epsilon: 0.1

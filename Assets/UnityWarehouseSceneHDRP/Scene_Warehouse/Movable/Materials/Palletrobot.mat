@@ -368,9 +368,9 @@ Material:
     - _smoothness_max: 0.871
     - _smoothness_min: 0
     m_Colors:
-    - _BaseColor: {r: 1, g: 0.953468, b: 0.4660377, a: 1}
+    - _BaseColor: {r: 1, g: 0.16465631, b: 0, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 1, g: 0.953468, b: 0.46603763, a: 1}
+    - _Color: {r: 1, g: 0.16465628, b: 0, a: 1}
     - _Detail_Tiling: {r: 10, g: 10, b: 0, a: 0}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}

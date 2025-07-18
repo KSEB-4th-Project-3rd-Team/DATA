@@ -149,8 +149,27 @@ public class AGVAgent : Agent
 
         if (currDist < 1f)
         {
-            AddReward(100f);
-            Debug.Log("Get Reward +100");
+            float finalReward = 100f;
+
+            int maxStep = 5000;
+            int halfStep = maxStep / 2;
+
+            if (StepCount <= halfStep)
+            {
+                float bonusRatio = (float)StepCount / halfStep;
+                float bonus = (1.5f - bonusRatio) * 50f;
+                finalReward += bonus;
+            }
+            else
+            {
+                float penaltyRatio = (float)(StepCount - halfStep) / halfStep;
+                float penalty = penaltyRatio * 75f;
+                finalReward -= penalty;
+            }
+
+
+            AddReward(finalReward);
+            Debug.Log($"[Step] : {StepCount}, [FinalReward] : {finalReward}");  
             SetNewRandomTarget();
             prevDistToTarget = Vector3.Distance(transform.position, currentTarget);
         }
@@ -171,28 +190,38 @@ public class AGVAgent : Agent
 
     private void SetNewRandomTarget()
     {
-        GameObject[] targetCandidates = GameObject.FindGameObjectsWithTag("TargetPos");
+        Transform platform = transform.parent;
+        if (platform == null)
+        {
+            Debug.LogWarning("AGV has no parent platform assigned.");
+        }
 
-        if (targetCandidates.Length == 0)
+        List<Transform> targetCandidates = new List<Transform>();
+        foreach (Transform child in platform.GetComponentsInChildren<Transform>())
+        {
+            if (child.CompareTag("TargetPos"))  targetCandidates.Add(child);
+        }
+
+        if (targetCandidates.Count == 0)
         {
             Debug.LogWarning("No TargetPos objects found in the scene.");
             return;
         }
 
-        foreach (GameObject target in targetCandidates)
+        foreach (Transform target in targetCandidates)
         {
             SpriteRenderer marker = target.GetComponent<SpriteRenderer>();
             if (marker != null) marker.enabled = false;
         }
 
-        int randomIndex = Random.Range(0, targetCandidates.Length);
-        GameObject selectedTarget = targetCandidates[randomIndex];
-        currentTarget = selectedTarget.transform.position;
+        int randomIndex = Random.Range(0, targetCandidates.Count);
+        Transform selectedTarget = targetCandidates[randomIndex];
+        currentTarget = selectedTarget.position;
 
         SpriteRenderer selcetedMarker = selectedTarget.GetComponent<SpriteRenderer>();
         if (selcetedMarker != null) selcetedMarker.enabled = true;
 
-        Debug.Log($"[Target Assigned] New target selected: {selectedTarget.name} at {currentTarget}");
+        Debug.Log($"[Target Assigned] {this.name}'s target selected: {selectedTarget.name} at {currentTarget}");
     }
 
     private void OnCollisionEnter(Collision collision)
