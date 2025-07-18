@@ -7802,10 +7802,22 @@ PrefabInstance:
     - target: {fileID: 1656638114904985436, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 5022602860645237092, guid: f8e9b604ed98f6849b8ef044ca0c4f82, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 1656638114904985436, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_BehaviorType
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1656638114904985436, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 58
+      objectReference: {fileID: 0}
+    - target: {fileID: 1656638114904985436, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1656638114904985436, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
+      propertyPath: 'm_BrainParameters.m_ActionSpec.BranchSizes.Array.data[0]'
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2453760648400530048, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_Enabled
@@ -7813,11 +7825,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2453760648400530048, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_RayLength
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2453760648400530048, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_MaxRayDegrees
-      value: 40
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2453760648400530048, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
+      propertyPath: m_RaysPerDirection
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2453760648400530048, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
+      propertyPath: m_DetectableTags.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2453760648400530048, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
+      propertyPath: 'm_DetectableTags.Array.data[0]'
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 3711978316018541058, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: MaxStep
@@ -7853,7 +7877,7 @@ PrefabInstance:
       objectReference: {fileID: 7821154465168477490}
     - target: {fileID: 3775616689855107308, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.22
+      value: -12.4
       objectReference: {fileID: 0}
     - target: {fileID: 3775616689855107308, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7861,7 +7885,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3775616689855107308, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.78
+      value: -6.4
       objectReference: {fileID: 0}
     - target: {fileID: 3775616689855107308, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7894,6 +7918,10 @@ PrefabInstance:
     - target: {fileID: 4046099219731300723, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
       propertyPath: m_Name
       value: Palletrobot 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4529668760244018914, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6394677027080015679, guid: 586ca79ec44844746b347929276fc0e6, type: 3}
